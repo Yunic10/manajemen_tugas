@@ -13,9 +13,10 @@
 
     </head>
     <body>
-        <h1 class="text-center py-4">Manajemen Tugas</h1>
-        <div class="mx-auto w-100">
-            <a href="{{ route('tugas.index') }}" class="btn btn-primary">Tambah Data</a>
+        <h1 class="text-center py-4 mt-5">Manajemen Tugas</h1>
+        <h2 class="text-center py-4">Kelola data tugasmu dengan lebih mudah :b</h2>
+        <div class="mx-auto w-100 object-center">
+            <a href="{{ route('tugas.index') }}" class="btn btn-primary w-50 position-absolute top-50 start-50 translate-middle">Kelola Data</a>
         </div>
         
         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>

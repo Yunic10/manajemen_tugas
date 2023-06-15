@@ -7,17 +7,20 @@
     <title>Manajemen Tugas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
-    <script src="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+    <script src="https://kit.fontawesome.com/abe7da9dbb.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1 align="center">Manajemen Tugas</h1>
-    <div class="card" style="width:70%;margin:0px auto;padding:20px;">
+    <h1 align="center" class="py-4 mt-4">Manajemen Tugas</h1>
+    <div class="card" style="width:70%;margin:0px auto;padding:20px; margin-bottom:40px;">
             <ul style="padding:0px;">
             <a href="{{ route('tugas.create') }}" ><button class="btn btn-primary">Tambah Data Tugas</button></a>
-            <a href=""><button class="btn btn-primary">Lihat Semua Kamar</button></a>
+            <a class="btn btn-primary my-2 @if (Route::is('tugas.belum')) disabled @endif" href="{{ route('tugas.belum') }}" role="button">Lihat Tugas Belum Selesai</a>
+            <a class="btn btn-primary my-2 @if (Route::is('tugas.selesai')) disabled @endif" href="{{ route('tugas.selesai') }}" role="button">Lihat Tugas Selesai</a>
+            <a class="btn btn-primary my-2 @if (Route::is('tugas.index')) disabled @endif" href="{{ route('tugas.index') }}" role="button">Lihat Semua Tugas</a>
             </ul>
         <div class="tabel">
-        <table id="data"class="table table-striped table-bordered" width="100%" align="center">
+        <table id="data" class="table table-striped table-bordered" width="100%" align="center">
             <thead>
                 <td>ID</td>
                 <td>Judul</td>
@@ -25,18 +28,36 @@
                 <td>Status</td>
                 <td>Aksi</td>
             </thead>
-        
-       @foreach ($tugas as $t)
-           <tr>
-                <td>{{ $t->id }}</td>
+            <tbody>
+            @php $i = 1; @endphp
+            @foreach ($tugas as $t)
+            <tr>
+                <td>{{ $i++ }}</td>
                 <td>{{ $t->judul }}</td>
                 <td>{{ $t->deskripsi }}</td>
                 <td>@if ($t->status) Selesai @else Belum selesai @endif</td>
-                <td><a href="{{ route('tugas.edit',['tuga'=> $t->id]) }}"><button class="btn btn-success">Edit</button></a> <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#hapus">Hapus</button></td>
-            </tr>
+                <td>
+                    <form style="display: inline;" action="{{ route('tugas.set', ['id' => $t->id, 'status' => 0]) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <button title="Set tugas sebagai incomplete" type="submit" class="btn btn-warning">
+                            <i class="fa-solid fa-stopwatch" style="color: #ffffff;"></i>
+                        </button>
+                    </form>
+                    <form style="display: inline;" action="{{ route('tugas.set', ['id' => $t->id, 'status' => 1]) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <button title="Set tugas sebagai complete" type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-check" style="color: #ffffff;"></i>
+                        </button>
+                    </form><br><br>
+                    <a href="{{ route('tugas.edit',['tuga'=> $t->id]) }}"><button class="btn btn-success">Edit</button></a>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#hapus.{{ $t->id }}">Hapus</button>
+                </td>
+            
 
             <!-- Modal Hapus -->
-            <div class="modal fade" id="hapus." tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="hapus.{{ $t->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -44,21 +65,27 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Anda yakin ingin menghapus data kamar nomor  ?
+                    Anda yakin ingin menghapus data tugas dengan judul "{{ $t->judul }}"   ?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <a href=""><button type="button" class="btn btn-primary">Ya, Hapus</button></a> 
+                    <form action="{{ route('tugas.destroy', ['tuga'=> $t->id]) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Ya, Hapus</button>
+                    </form>
+                    
                 </div>
                 </div>
             </div>
             </div>
             <!-- End Modal -->
+            </tr>
+            @endforeach
+            </tbody>
+            
         </table>
         </div>
-       @endforeach
-            
-        
     </div>
     
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>

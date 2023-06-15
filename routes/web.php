@@ -17,5 +17,8 @@ use App\Http\Controllers\TugasController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('tugas', TugasController::class);
 
+Route::get('/tugas/selesai', [TugasController::class, 'show'])->name('tugas.selesai');
+Route::get('/tugas/belumselesai', [TugasController::class, 'show_belum'])->name('tugas.belum');
+Route::put('/tugas/{id}/status/{status}', [TugasController::class, 'set_status'])->name('tugas.set');
+Route::resource('/tugas', TugasController::class);
